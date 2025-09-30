@@ -1,0 +1,561 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Firebase Genkit and TypeScript</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="firebase-genkit-typescript-codelab"
+                  title="Getting Started with Firebase Genkit and TypeScript"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Firebase Genkit is a powerful framework for building AI-powered applications with TypeScript. This codelab will guide you through three essential patterns for working with Genkit: basic AI generation, prompt management with <code>.prompt</code> files, and building reusable flows.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to set up Firebase Genkit in a TypeScript project</li>
+<li>How to use the <code>ai.generate</code> API for direct AI interactions</li>
+<li>How to create and manage prompts using <code>.prompt</code> files</li>
+<li>How to build and test Genkit flows</li>
+<li>How to use Firebase Studio for testing and debugging</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll need</h2>
+<ul>
+<li><a href="https://nodejs.org/en/download/" target="_blank">Node.js 20+</a> installed (includes npm)</li>
+<li>A text editor (<a href="https://code.visualstudio.com/" target="_blank">VS Code</a> recommended)</li>
+<li>A Google AI API key - <a href="https://aistudio.google.com/apikey" target="_blank">Get API key here</a></li>
+<li>Basic knowledge of TypeScript/JavaScript</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>By the end of this codelab, you&#39;ll have built three simple examples:</p>
+<ol type="1">
+<li><strong>Basic AI Generation</strong>: Simple text generation using <code>ai.generate</code></li>
+<li><strong>Story Generator</strong>: Using <code>.prompt</code> files for template-based generation</li>
+<li><strong>Greeting &amp; Joke Flows</strong>: Simple reusable flows with input/output schemas</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up your environment" duration="10">
+        <p>Before we start building, let&#39;s set up a new Genkit project.</p>
+<h2 is-upgraded>Initialize your project</h2>
+<p>First, create a new directory and initialize a Node.js project:</p>
+<pre><code language="language-bash" class="language-bash">mkdir genkit-workshop
+cd genkit-workshop
+npm init -y
+</code></pre>
+<h2 is-upgraded>Install Genkit packages</h2>
+<p>First, install the Genkit CLI globally:</p>
+<pre><code language="language-bash" class="language-bash">npm install -g genkit-cli
+</code></pre>
+<p>Then, add the following packages to your project:</p>
+<pre><code language="language-bash" class="language-bash">npm install genkit @genkit-ai/google-genai
+npm install -D typescript tsx @types/node
+</code></pre>
+<h2 is-upgraded>Configure TypeScript</h2>
+<p>Create a <code>tsconfig.json</code> file:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;compilerOptions&#34;: {
+    &#34;target&#34;: &#34;ES2020&#34;,
+    &#34;module&#34;: &#34;commonjs&#34;,
+    &#34;lib&#34;: [&#34;ES2020&#34;],
+    &#34;outDir&#34;: &#34;./dist&#34;,
+    &#34;rootDir&#34;: &#34;./src&#34;,
+    &#34;strict&#34;: true,
+    &#34;esModuleInterop&#34;: true,
+    &#34;skipLibCheck&#34;: true,
+    &#34;forceConsistentCasingInFileNames&#34;: true,
+    &#34;resolveJsonModule&#34;: true
+  },
+  &#34;include&#34;: [&#34;src/**/*&#34;],
+  &#34;exclude&#34;: [&#34;node_modules&#34;, &#34;dist&#34;]
+}
+</code></pre>
+<h2 is-upgraded>Set up environment variables</h2>
+<p>Create a <code>.env</code> file in your project root:</p>
+<pre><code language="language-bash" class="language-bash"># Get your API key from https://aistudio.google.com/apikey
+GEMINI_API_KEY=your_google_ai_api_key_here
+</code></pre>
+<p><strong>Important:</strong> Never commit your API keys to version control. Create a <code>.gitignore</code> file:</p>
+<pre><code language="language-gitignore" class="language-gitignore">node_modules/
+.env
+dist/
+*.log
+</code></pre>
+<h2 is-upgraded>Install dotenv for environment variables</h2>
+<pre><code language="language-bash" class="language-bash">npm install dotenv
+</code></pre>
+<h2 is-upgraded>Verify your setup</h2>
+<p>Let&#39;s make sure everything is working correctly:</p>
+<pre><code language="language-bash" class="language-bash"># Check Node.js version (should be 18+)
+node --version
+
+# Check npm version
+npm --version
+
+# Verify TypeScript compilation works
+npx tsc --version
+</code></pre>
+<p>If any command fails, please install the missing dependencies using the links provided above.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 1: Basic AI Generation with ai.generate" duration="10">
+        <p>Let&#39;s start with the simplest way to use Genkit: direct AI generation using the <code>ai.generate</code> API.</p>
+<h2 is-upgraded>Create the basic generator</h2>
+<p>Create <code>src/example1-basic.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">import { googleAI } from &#39;@genkit-ai/google-genai&#39;;
+import { genkit } from &#39;genkit&#39;;
+import &#39;dotenv/config&#39;;
+
+// Initialize Genkit with Google AI
+const ai = genkit({
+  plugins: [googleAI()],
+});
+
+async function basicGeneration() {
+  try {
+    // Simple text generation
+    const response = await ai.generate({
+      prompt: &#39;Write a short welcome message for a new team member joining our development team.&#39;,
+    });
+
+    console.log(&#39;Generated message:&#39;);
+    console.log(response.text());
+  } catch (error) {
+    console.error(&#39;Error generating content:&#39;, error);
+  }
+}
+
+// Run the example
+basicGeneration();
+</code></pre>
+<h2 is-upgraded>Run your first example</h2>
+<p>Execute the basic generation example:</p>
+<pre><code language="language-bash" class="language-bash">npx tsx src/example1-basic.ts
+</code></pre>
+<p>You should see a generated welcome message!</p>
+<h2 is-upgraded>Try different prompts</h2>
+<p>Let&#39;s try a few more simple examples. Update <code>src/example1-basic.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">import { googleAI } from &#39;@genkit-ai/google-genai&#39;;
+import { genkit } from &#39;genkit&#39;;
+import &#39;dotenv/config&#39;;
+
+// Initialize Genkit with Google AI
+const ai = genkit({
+  plugins: [googleAI()],
+});
+
+async function basicGeneration() {
+  try {
+    // Example 1: Generate a welcome message
+    console.log(&#39;=== Welcome Message ===&#39;);
+    const welcomeResponse = await ai.generate({
+      prompt: &#39;Write a short welcome message for a new team member joining our development team.&#39;,
+    });
+    console.log(welcomeResponse.text());
+
+    // Example 2: Create a simple task list
+    console.log(&#39;\n=== Task List ===&#39;);
+    const taskResponse = await ai.generate({
+      prompt: &#39;Create a simple 3-item todo list for setting up a new development environment.&#39;,
+    });
+    console.log(taskResponse.text());
+
+    // Example 3: Write a brief explanation
+    console.log(&#39;\n=== Explanation ===&#39;);
+    const explanationResponse = await ai.generate({
+      prompt: &#39;Explain what TypeScript is in 2-3 simple sentences.&#39;,
+    });
+    console.log(explanationResponse.text());
+  } catch (error) {
+    console.error(&#39;Error generating content:&#39;, error);
+  }
+}
+
+// Run the example
+basicGeneration();
+</code></pre>
+<h2 is-upgraded>Test with Firebase Studio</h2>
+<p>Start Firebase Studio to test your generation interactively:</p>
+<pre><code language="language-bash" class="language-bash">genkit start -- tsx --watch src/index.ts
+</code></pre>
+<p>This will open the Genkit Developer UI in your browser where you can test your AI generation with different prompts and see the results in real-time.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 2: Working with Prompt Files" duration="15">
+        <p>Managing prompts in separate files makes them more maintainable and allows for better collaboration. Let&#39;s create a simple story generator using <code>.prompt</code> files.</p>
+<h2 is-upgraded>Create your first prompt file</h2>
+<p>Create a directory for prompts at your project root and add your first prompt file:</p>
+<pre><code language="language-bash" class="language-bash">mkdir prompts
+</code></pre>
+<p>Create <code>prompts/story-generator.prompt</code>:</p>
+<pre><code>---
+model: googleai/gemini-2.5-flash
+input:
+  schema:
+    character: string
+    setting: string
+---
+
+Write a short, fun story (2-3 paragraphs) about &#123;&#123;character}} in &#123;&#123;setting}}.
+Keep it light-hearted and suitable for all ages.
+</code></pre>
+<h2 is-upgraded>Create the prompt-based generator</h2>
+<p>Create <code>src/example2-prompts.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">import { googleAI } from &#39;@genkit-ai/google-genai&#39;;
+import { genkit } from &#39;genkit&#39;;
+import &#39;dotenv/config&#39;;
+
+// Initialize Genkit with Google AI
+const ai = genkit({
+  plugins: [googleAI()],
+});
+
+// Load the prompt from the file
+const storyGeneratorPrompt = ai.prompt(&#39;story-generator&#39;);
+
+async function generateStory() {
+  try {
+    console.log(&#39;=== Generating Story with Prompt File ===&#39;);
+
+    const storyInput = {
+      character: &#39;a friendly robot&#39;,
+      setting: &#39;a magical library&#39;,
+    };
+
+    console.log(&#39;Story parameters:&#39;);
+    console.log(`Character: ${storyInput.character}`);
+    console.log(`Setting: ${storyInput.setting}`);
+
+    const response = await storyGeneratorPrompt(storyInput);
+
+    console.log(&#39;\n=== Generated Story ===&#39;);
+    console.log(response.text());
+  } catch (error) {
+    console.error(&#39;Error generating story:&#39;, error);
+  }
+}
+
+// Generate different stories
+async function generateDifferentStories() {
+  const stories = [
+    { character: &#39;a curious cat&#39;, setting: &#39;a space station&#39; },
+    { character: &#39;a young wizard&#39;, setting: &#39;a bustling marketplace&#39; },
+    { character: &#39;a brave explorer&#39;, setting: &#39;an underwater city&#39; },
+  ];
+
+  for (const story of stories) {
+    console.log(`\n=== Story: ${story.character} in ${story.setting} ===`);
+    const response = await storyGeneratorPrompt(story);
+    console.log(response.text());
+    console.log(&#39;\n&#39; + &#39;=&#39;.repeat(50));
+  }
+}
+
+// Run examples
+async function main() {
+  await generateStory();
+  await generateDifferentStories();
+}
+
+main();
+</code></pre>
+<h2 is-upgraded>Create another simple prompt</h2>
+<p>Let&#39;s create another prompt for generating simple recipes. Create <code>prompts/recipe-generator.prompt</code>:</p>
+<pre><code>---
+model: googleai/gemini-2.5-flash
+input:
+  schema:
+    ingredient: string
+    mealType: string
+---
+
+Create a simple recipe for &#123;&#123;mealType}} using &#123;&#123;ingredient}} as the main ingredient.
+Keep it easy to follow with basic ingredients and simple steps.
+</code></pre>
+<h2 is-upgraded>Test your prompts</h2>
+<p>Run the prompt-based example:</p>
+<pre><code language="language-bash" class="language-bash">npx tsx src/example2-prompts.ts
+</code></pre>
+<p>You should see several different stories generated using your prompt file!</p>
+<h2 is-upgraded>View prompts in the Developer UI</h2>
+<p>With the Developer UI running (<code>genkit start -- tsx --watch src/index.ts</code>), you can see your prompts listed in the interface and test them with different inputs interactively.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 3: Building Simple Genkit Flows" duration="15">
+        <p>Flows are reusable functions that can be called, tested, and monitored. They&#39;re perfect for building simple AI workflows.</p>
+<h2 is-upgraded>Create a basic greeting flow</h2>
+<p>Create <code>src/example3-flows.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">import { googleAI } from &#39;@genkit-ai/google-genai&#39;;
+import { genkit, z } from &#39;genkit&#39;;
+import &#39;dotenv/config&#39;;
+
+// Initialize Genkit with Google AI
+const ai = genkit({
+  plugins: [googleAI()],
+});
+
+// Define a simple greeting flow
+export const greetingFlow = ai.defineFlow(
+  {
+    name: &#39;greeting&#39;,
+    inputSchema: z.object({
+      name: z.string().describe(&#34;The person&#39;s name&#34;),
+      language: z.enum([&#39;english&#39;, &#39;spanish&#39;, &#39;french&#39;]).describe(&#39;Language for greeting&#39;),
+    }),
+    outputSchema: z.object({
+      greeting: z.string().describe(&#39;The generated greeting&#39;),
+    }),
+  },
+  async ({ name, language }) =&gt; {
+    // Generate the greeting
+    const response = await ai.generate({
+      prompt: `Create a friendly greeting for ${name} in ${language}. Keep it warm and welcoming.`,
+    });
+
+    return {
+      greeting: response.text().trim(),
+    };
+  },
+);
+
+// Define a joke generator flow
+export const jokeFlow = ai.defineFlow(
+  {
+    name: &#39;jokeGenerator&#39;,
+    inputSchema: z.object({
+      topic: z.string().describe(&#39;The topic for the joke&#39;),
+    }),
+    outputSchema: z.object({
+      joke: z.string().describe(&#39;The generated joke&#39;),
+    }),
+  },
+  async ({ topic }) =&gt; {
+    // Generate a clean, family-friendly joke
+    const response = await ai.generate({
+      prompt: `Create a clean, family-friendly joke about ${topic}. Keep it short and funny.`,
+    });
+
+    return {
+      joke: response.text().trim(),
+    };
+  },
+);
+
+// Example usage function
+async function demonstrateFlows() {
+  try {
+    console.log(&#39;=== Testing Greeting Flow ===&#39;);
+
+    const greetingResult = await greetingFlow({
+      name: &#39;Alice&#39;,
+      language: &#39;english&#39;,
+    });
+
+    console.log(&#39;Greeting Result:&#39;);
+    console.log(greetingResult.greeting);
+
+    console.log(&#39;\n=== Testing Joke Flow ===&#39;);
+
+    const jokeResult = await jokeFlow({
+      topic: &#39;programming&#39;,
+    });
+
+    console.log(&#39;Joke Result:&#39;);
+    console.log(jokeResult.joke);
+
+    console.log(&#39;\n=== Testing Multiple Greetings ===&#39;);
+    const people = [
+      { name: &#39;Bob&#39;, language: &#39;spanish&#39; as const },
+      { name: &#39;Claire&#39;, language: &#39;french&#39; as const },
+    ];
+
+    for (const person of people) {
+      const result = await greetingFlow(person);
+      console.log(`${person.name} (${person.language}): ${result.greeting}`);
+    }
+  } catch (error) {
+    console.error(&#39;Error running flows:&#39;, error);
+  }
+}
+
+// Run the demonstration
+demonstrateFlows();
+</code></pre>
+<pre><code>### Create a package.json script
+
+Add a script to your `package.json` to easily run the flows:
+
+```json
+{
+  &#34;scripts&#34;: {
+    &#34;example1&#34;: &#34;tsx src/example1-basic.ts&#34;,
+    &#34;example2&#34;: &#34;tsx src/example2-prompts.ts&#34;,
+    &#34;example3&#34;: &#34;tsx src/example3-flows.ts&#34;,
+    &#34;studio&#34;: &#34;genkit start&#34;
+  }
+}
+</code></pre>
+<h2 is-upgraded>Test your flows</h2>
+<p>Run the flows example:</p>
+<pre><code language="language-bash" class="language-bash">npm run example3
+</code></pre>
+<h2 is-upgraded>Test flows in the Developer UI</h2>
+<p>Start the Developer UI and navigate to the Flows section:</p>
+<pre><code language="language-bash" class="language-bash">genkit start -- tsx --watch src/index.ts
+</code></pre>
+<p>In the Developer UI, you&#39;ll be able to:</p>
+<ul>
+<li>See all your defined flows</li>
+<li>Test them with custom inputs</li>
+<li>View execution traces and performance metrics</li>
+<li>Debug any issues step by step</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing and Debugging with Firebase Studio" duration="10">
+        <p>Firebase Studio provides a powerful interface for testing and debugging your Genkit applications.</p>
+<h2 is-upgraded>Key Features of Firebase Studio</h2>
+<ol type="1">
+<li><strong>Flow Testing</strong>: Interactive testing of your flows with custom inputs</li>
+<li><strong>Prompt Management</strong>: Visual editor for your prompts with real-time testing</li>
+<li><strong>Model Comparison</strong>: Test the same prompt with different models side by side</li>
+<li><strong>Execution Traces</strong>: Detailed view of each step in your flows</li>
+<li><strong>Performance Monitoring</strong>: Track response times and token usage</li>
+</ol>
+<h2 is-upgraded>Best Practices for Testing</h2>
+<ol type="1">
+<li><strong>Start Simple</strong>: Test basic functionality before adding complexity</li>
+<li><strong>Use Diverse Inputs</strong>: Test with various input types and edge cases</li>
+<li><strong>Monitor Performance</strong>: Watch token usage and response times</li>
+<li><strong>Iterate on Prompts</strong>: Use Studio to refine your prompts for better results</li>
+<li><strong>Version Control</strong>: Keep track of prompt changes and their performance</li>
+</ol>
+<h2 is-upgraded>Debugging Common Issues</h2>
+<h3 is-upgraded>API Key Problems</h3>
+<pre><code language="language-bash" class="language-bash">Error: Failed to authenticate with Google AI
+</code></pre>
+<ul>
+<li>Check that your <code>GEMINI_API_KEY</code> is set correctly</li>
+<li>Verify the API key is valid and has proper permissions</li>
+</ul>
+<h3 is-upgraded>Schema Validation Errors</h3>
+<pre><code language="language-bash" class="language-bash">Error: Output doesn&#39;t match expected schema
+</code></pre>
+<ul>
+<li>Review your output schemas for accuracy</li>
+<li>Test with simpler schemas first</li>
+<li>Use Firebase Studio to see the raw model output</li>
+</ul>
+<h3 is-upgraded>Rate Limiting</h3>
+<pre><code language="language-bash" class="language-bash">Error: Rate limit exceeded
+</code></pre>
+<ul>
+<li>Implement retry logic with exponential backoff</li>
+<li>Consider using different models or reducing request frequency</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps" duration="0">
+        <p>Congratulations! You&#39;ve learned the fundamentals of Firebase Genkit with TypeScript. Here&#39;s what you can explore next:</p>
+<h2 is-upgraded>Continue Learning</h2>
+<ul>
+<li><strong>Custom Models</strong>: Integrate other AI providers (OpenAI, Anthropic, local models)</li>
+<li><strong>Vector Databases</strong>: Add semantic search capabilities with embeddings</li>
+<li><strong>Function Calling</strong>: Enable AI to call your custom functions</li>
+<li><strong>Production Deployment</strong>: Deploy your Genkit apps to Cloud Functions or Cloud Run</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://genkit.dev/docs/" target="_blank">Official Genkit Documentation</a></li>
+<li><a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub Repository</a></li>
+<li><a href="https://discord.gg/firebase" target="_blank">Firebase Discord Community</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <h2 is-upgraded>Common Issues and Solutions</h2>
+<h3 is-upgraded>&#34;Module not found&#34; errors</h3>
+<pre><code language="language-bash" class="language-bash">npm install --save-dev @types/node
+npm install dotenv
+</code></pre>
+<h3 is-upgraded>TypeScript compilation errors</h3>
+<pre><code language="language-bash" class="language-bash">npx tsc --noEmit  # Check for type errors
+</code></pre>
+<h3 is-upgraded>&#34;tsx command not found&#34;</h3>
+<pre><code language="language-bash" class="language-bash">npm install -g tsx  # Install tsx globally, or use npx tsx
+</code></pre>
+<h3 is-upgraded>Firebase Studio not starting</h3>
+<pre><code language="language-bash" class="language-bash">npx genkit start --port 4000  # Try different port
+</code></pre>
+<h3 is-upgraded>API rate limits</h3>
+<ul>
+<li>Implement exponential backoff</li>
+<li>Use batch processing for multiple requests</li>
+<li>Consider upgrading your API plan</li>
+</ul>
+<h2 is-upgraded>Getting Help</h2>
+<ul>
+<li>Check the <a href="https://github.com/firebase/genkit/issues" target="_blank">GitHub Issues</a></li>
+<li>Join the <a href="https://discord.gg/firebase" target="_blank">Firebase Discord</a></li>
+<li>Post questions on <a href="https://stackoverflow.com/questions/tagged/firebase-genkit" target="_blank">Stack Overflow</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>You&#39;ve successfully built three different patterns for working with Firebase Genkit:</p>
+<ol type="1">
+<li><strong>Direct AI Generation</strong>: Quick and simple for basic use cases</li>
+<li><strong>Prompt Management</strong>: Organized and maintainable for complex prompts</li>
+<li><strong>Flows</strong>: Powerful and reusable for complex AI workflows</li>
+</ol>
+<p>These patterns form the foundation for building sophisticated AI-powered applications. Start with simple use cases and gradually build more complex workflows as you become comfortable with the framework.</p>
+<p>Happy building with Firebase Genkit! 🚀</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

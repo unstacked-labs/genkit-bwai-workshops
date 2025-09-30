@@ -1,0 +1,10 @@
+theme: jekyll-theme-minimal
+title: Firebase Genkit Codelabs
+description: Learn to build AI-powered applications with Firebase Genkit and TypeScript
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - README.md

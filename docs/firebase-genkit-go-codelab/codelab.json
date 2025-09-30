@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-09-30T23:07:00+03:00",
+  "id": "firebase-genkit-go-codelab",
+  "duration": 65,
+  "title": "Getting Started with Firebase Genkit and Go",
+  "summary": "Learn how to build AI-powered applications with Firebase Genkit and Go",
+  "source": "README-go.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "firebase",
+    "ai",
+    "go"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "firebase-genkit-go-codelab"
+}

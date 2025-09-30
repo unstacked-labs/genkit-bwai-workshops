@@ -1,6 +1,6 @@
 # Firebase Genkit Codelabs
 
-This directory contains interactive codelabs for learning Firebase Genkit with TypeScript.
+This directory contains interactive codelabs for learning Firebase Genkit with different programming languages.
 
 ## Available Codelabs
 
@@ -19,6 +19,22 @@ Learn the fundamentals of building AI-powered applications with Firebase Genkit 
 **Duration:** 45-60 minutes  
 **Level:** Beginner  
 **Prerequisites:** Basic TypeScript/JavaScript knowledge
+
+### [Getting Started with Firebase Genkit and Go](firebase-genkit-go-codelab/)
+
+Learn the fundamentals of building AI-powered applications with Firebase Genkit and Go.
+
+**What you'll learn:**
+
+- Setting up Firebase Genkit in a Go project
+- Using the `genkit.Generate` API for direct AI interactions
+- Creating structured data with Go structs and JSON schemas
+- Building and testing Genkit flows with HTTP endpoints
+- Using Firebase Studio for testing and debugging
+
+**Duration:** 45-60 minutes  
+**Level:** Beginner  
+**Prerequisites:** Basic Go programming knowledge
 
 ## Running Locally
 
@@ -42,8 +58,14 @@ These codelabs are automatically published to GitHub Pages when changes are push
 
 To update or add new codelabs:
 
-1. Edit the source markdown files
-2. Regenerate the codelab using `claat export -o docs README.md`
+1. Edit the source markdown files (README.md for TypeScript, README-go.md for Go)
+2. Regenerate the codelabs using `./generate-codelab.sh` or manually:
+
+   ```bash
+   claat export -o docs README.md
+   claat export -o docs README-go.md
+   ```
+
 3. Commit and push your changes
 
 ## Resources

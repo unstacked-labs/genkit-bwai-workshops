@@ -1,0 +1,708 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Firebase Genkit and Go</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="firebase-genkit-go-codelab"
+                  title="Getting Started with Firebase Genkit and Go"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Firebase Genkit is a powerful framework for building AI-powered applications with Go. This codelab will guide you through three essential patterns for working with Genkit: basic AI generation, structured data generation, and building reusable flows.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to set up Firebase Genkit in a Go project</li>
+<li>How to use the <code>genkit.Generate</code> API for direct AI interactions</li>
+<li>How to create structured data with Go structs and JSON schemas</li>
+<li>How to build and test Genkit flows</li>
+<li>How to use Firebase Studio for testing and debugging</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll need</h2>
+<ul>
+<li><a href="https://go.dev/doc/install" target="_blank">Go 1.24+</a> installed</li>
+<li>A text editor (<a href="https://code.visualstudio.com/" target="_blank">VS Code</a> recommended)</li>
+<li>A Google AI API key - <a href="https://aistudio.google.com/apikey" target="_blank">Get API key here</a></li>
+<li>Basic knowledge of Go programming</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>By the end of this codelab, you&#39;ll have built three simple examples:</p>
+<ol type="1">
+<li><strong>Basic AI Generation</strong>: Simple text generation using <code>genkit.Generate</code></li>
+<li><strong>Structured Data Generation</strong>: Using Go structs for type-safe AI responses</li>
+<li><strong>Flow-based Services</strong>: Simple reusable flows with HTTP endpoints</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up your environment" duration="10">
+        <p>Before we start building, let&#39;s set up a new Genkit Go project.</p>
+<h2 is-upgraded>Initialize your project</h2>
+<p>First, create a new directory and initialize a Go module:</p>
+<pre><code language="language-bash" class="language-bash">mkdir genkit-go-workshop
+cd genkit-go-workshop
+go mod init example/genkit-go-workshop
+</code></pre>
+<h2 is-upgraded>Install Genkit CLI</h2>
+<p>First, install the Genkit CLI globally:</p>
+<pre><code language="language-bash" class="language-bash">curl -sL cli.genkit.dev | bash
+</code></pre>
+<h2 is-upgraded>Install Genkit Go package</h2>
+<p>Add the Genkit package for Go:</p>
+<pre><code language="language-bash" class="language-bash">go get github.com/firebase/genkit/go
+</code></pre>
+<h2 is-upgraded>Set up environment variables</h2>
+<p>Create a <code>.env</code> file in your project root:</p>
+<pre><code language="language-bash" class="language-bash"># Get your API key from https://aistudio.google.com/apikey
+GEMINI_API_KEY=your_google_ai_api_key_here
+</code></pre>
+<p><strong>Important:</strong> Never commit your API keys to version control. Create a <code>.gitignore</code> file:</p>
+<pre><code language="language-gitignore" class="language-gitignore">.env
+*.log
+</code></pre>
+<h2 is-upgraded>Verify your setup</h2>
+<p>Let&#39;s make sure everything is working correctly:</p>
+<pre><code language="language-bash" class="language-bash"># Check Go version (should be 1.24+)
+go version
+
+# Verify the Genkit package is installed
+go list -m github.com/firebase/genkit/go
+</code></pre>
+<p>If any command fails, please install the missing dependencies using the links provided above.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 1: Basic AI Generation with genkit.Generate" duration="10">
+        <p>Let&#39;s start with the simplest way to use Genkit: direct AI generation using the <code>genkit.Generate</code> API.</p>
+<h2 is-upgraded>Create the basic generator</h2>
+<p>Create <code>example1/main.go</code>:</p>
+<pre><code language="language-go" class="language-go">package main
+
+import (
+	&#34;context&#34;
+	&#34;fmt&#34;
+	&#34;log&#34;
+	&#34;os&#34;
+
+	&#34;github.com/firebase/genkit/go/ai&#34;
+	&#34;github.com/firebase/genkit/go/genkit&#34;
+	&#34;github.com/firebase/genkit/go/plugins/googlegenai&#34;
+)
+
+func main() {
+	ctx := context.Background()
+
+	// Load environment variables
+	apiKey := os.Getenv(&#34;GEMINI_API_KEY&#34;)
+	if apiKey == &#34;&#34; {
+		log.Fatal(&#34;GEMINI_API_KEY environment variable is required&#34;)
+	}
+
+	// Initialize Genkit with Google AI plugin
+	g := genkit.Init(ctx,
+		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
+		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+	)
+
+	// Simple text generation
+	response, err := genkit.Generate(ctx, g,
+		ai.WithPrompt(&#34;Write a short welcome message for a new team member joining our development team.&#34;),
+	)
+	if err != nil {
+		log.Fatalf(&#34;Error generating content: %v&#34;, err)
+	}
+
+	fmt.Println(&#34;Generated message:&#34;)
+	fmt.Println(response.Text())
+}
+</code></pre>
+<h2 is-upgraded>Run your first example</h2>
+<p>Execute the basic generation example:</p>
+<pre><code language="language-bash" class="language-bash"># Set your API key
+export GEMINI_API_KEY=your_actual_api_key_here
+
+cd example1
+go run main.go
+</code></pre>
+<p>You should see a generated welcome message!</p>
+<h2 is-upgraded>Try different prompts</h2>
+<p>Let&#39;s try a few more simple examples. Update <code>example1/main.go</code>:</p>
+<pre><code language="language-go" class="language-go">package main
+
+import (
+	&#34;context&#34;
+	&#34;fmt&#34;
+	&#34;log&#34;
+	&#34;os&#34;
+
+	&#34;github.com/firebase/genkit/go/ai&#34;
+	&#34;github.com/firebase/genkit/go/genkit&#34;
+	&#34;github.com/firebase/genkit/go/plugins/googlegenai&#34;
+)
+
+func main() {
+	ctx := context.Background()
+
+	// Load environment variables
+	apiKey := os.Getenv(&#34;GEMINI_API_KEY&#34;)
+	if apiKey == &#34;&#34; {
+		log.Fatal(&#34;GEMINI_API_KEY environment variable is required&#34;)
+	}
+
+	// Initialize Genkit with Google AI plugin
+	g := genkit.Init(ctx,
+		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
+		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+	)
+
+	// Example 1: Generate a welcome message
+	fmt.Println(&#34;=== Welcome Message ===&#34;)
+	response1, err := genkit.Generate(ctx, g,
+		ai.WithPrompt(&#34;Write a short welcome message for a new team member joining our development team.&#34;),
+	)
+	if err != nil {
+		log.Printf(&#34;Error generating welcome message: %v&#34;, err)
+	} else {
+		fmt.Println(response1.Text())
+	}
+
+	// Example 2: Create a simple task list
+	fmt.Println(&#34;\n=== Task List ===&#34;)
+	response2, err := genkit.Generate(ctx, g,
+		ai.WithPrompt(&#34;Create a simple 3-item todo list for setting up a new development environment.&#34;),
+	)
+	if err != nil {
+		log.Printf(&#34;Error generating task list: %v&#34;, err)
+	} else {
+		fmt.Println(response2.Text())
+	}
+
+	// Example 3: Write a brief explanation
+	fmt.Println(&#34;\n=== Explanation ===&#34;)
+	response3, err := genkit.Generate(ctx, g,
+		ai.WithPrompt(&#34;Explain what Go programming language is in 2-3 simple sentences.&#34;),
+	)
+	if err != nil {
+		log.Printf(&#34;Error generating explanation: %v&#34;, err)
+	} else {
+		fmt.Println(response3.Text())
+	}
+}
+</code></pre>
+<h2 is-upgraded>Test with Firebase Studio</h2>
+<p>Start Firebase Studio to test your generation interactively:</p>
+<pre><code language="language-bash" class="language-bash">genkit start -- go run example1/main.go
+</code></pre>
+<p>This will open the Genkit Developer UI in your browser where you can test your AI generation with different prompts and see the results in real-time.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 2: Structured Data Generation" duration="15">
+        <p>Go&#39;s type system makes it perfect for generating structured data with AI. Let&#39;s create a story generator using Go structs for type-safe responses.</p>
+<h2 is-upgraded>Create structured data types</h2>
+<p>Create <code>example2/main.go</code>:</p>
+<pre><code language="language-go" class="language-go">package main
+
+import (
+	&#34;context&#34;
+	&#34;encoding/json&#34;
+	&#34;fmt&#34;
+	&#34;log&#34;
+	&#34;os&#34;
+
+	&#34;github.com/firebase/genkit/go/ai&#34;
+	&#34;github.com/firebase/genkit/go/genkit&#34;
+	&#34;github.com/firebase/genkit/go/plugins/googlegenai&#34;
+)
+
+// Story represents a generated story with structured data
+type Story struct {
+	Title      string   `json:&#34;title&#34; jsonschema:&#34;description=The title of the story&#34;`
+	Characters []string `json:&#34;characters&#34; jsonschema:&#34;description=Main characters in the story&#34;`
+	Setting    string   `json:&#34;setting&#34; jsonschema:&#34;description=Where the story takes place&#34;`
+	Plot       string   `json:&#34;plot&#34; jsonschema:&#34;description=The main plot of the story&#34;`
+	Mood       string   `json:&#34;mood&#34; jsonschema:&#34;description=The overall mood (happy, adventurous, mysterious, etc.)&#34;`
+}
+
+// StoryInput represents the input parameters for story generation
+type StoryInput struct {
+	Character string `json:&#34;character&#34; jsonschema:&#34;description=Main character for the story&#34;`
+	Setting   string `json:&#34;setting&#34; jsonschema:&#34;description=Setting where the story takes place&#34;`
+}
+
+func main() {
+	ctx := context.Background()
+
+	// Load environment variables
+	apiKey := os.Getenv(&#34;GEMINI_API_KEY&#34;)
+	if apiKey == &#34;&#34; {
+		log.Fatal(&#34;GEMINI_API_KEY environment variable is required&#34;)
+	}
+
+	// Initialize Genkit with Google AI plugin
+	g := genkit.Init(ctx,
+		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
+		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+	)
+
+	// Generate a structured story
+	fmt.Println(&#34;=== Generating Structured Story ===&#34;)
+	
+	input := StoryInput{
+		Character: &#34;a friendly robot&#34;,
+		Setting:   &#34;a magical library&#34;,
+	}
+
+	fmt.Printf(&#34;Character: %s\n&#34;, input.Character)
+	fmt.Printf(&#34;Setting: %s\n&#34;, input.Setting)
+
+	prompt := fmt.Sprintf(`Create a short, fun story about %s in %s. 
+		Make it light-hearted and suitable for all ages.
+		Return the response as structured data with title, characters, setting, plot, and mood.`,
+		input.Character, input.Setting)
+
+	// Generate structured data using Go structs
+	story, _, err := genkit.GenerateData[Story](ctx, g,
+		ai.WithPrompt(prompt),
+	)
+	if err != nil {
+		log.Fatalf(&#34;Error generating story: %v&#34;, err)
+	}
+
+	// Print the structured story
+	fmt.Println(&#34;\n=== Generated Story ===&#34;)
+	storyJSON, _ := json.MarshalIndent(story, &#34;&#34;, &#34;  &#34;)
+	fmt.Println(string(storyJSON))
+
+	// Generate different stories
+	fmt.Println(&#34;\n=== Generating Different Stories ===&#34;)
+	
+	stories := []StoryInput{
+		{Character: &#34;a curious cat&#34;, Setting: &#34;a space station&#34;},
+		{Character: &#34;a young wizard&#34;, Setting: &#34;a bustling marketplace&#34;},
+		{Character: &#34;a brave explorer&#34;, Setting: &#34;an underwater city&#34;},
+	}
+
+	for i, storyInput := range stories {
+		fmt.Printf(&#34;\n--- Story %d: %s in %s ---\n&#34;, i+1, storyInput.Character, storyInput.Setting)
+		
+		prompt := fmt.Sprintf(`Create a short, fun story about %s in %s. 
+			Make it light-hearted and suitable for all ages.
+			Return the response as structured data with title, characters, setting, plot, and mood.`,
+			storyInput.Character, storyInput.Setting)
+
+		story, _, err := genkit.GenerateData[Story](ctx, g,
+			ai.WithPrompt(prompt),
+		)
+		if err != nil {
+			log.Printf(&#34;Error generating story %d: %v&#34;, i+1, err)
+			continue
+		}
+
+		fmt.Printf(&#34;Title: %s\n&#34;, story.Title)
+		fmt.Printf(&#34;Plot: %s\n&#34;, story.Plot)
+		fmt.Printf(&#34;Mood: %s\n&#34;, story.Mood)
+	}
+}
+</code></pre>
+<h2 is-upgraded>Test your structured generation</h2>
+<p>Run the structured generation example:</p>
+<pre><code language="language-bash" class="language-bash">cd example2
+go run main.go
+</code></pre>
+<p>You should see several different stories generated with structured JSON data!</p>
+<h2 is-upgraded>Create another structured type</h2>
+<p>Let&#39;s create another example for generating simple recipes. Add this to a new file <code>example2/recipe.go</code>:</p>
+<pre><code language="language-go" class="language-go">package main
+
+import (
+	&#34;context&#34;
+	&#34;encoding/json&#34;
+	&#34;fmt&#34;
+	&#34;log&#34;
+	&#34;os&#34;
+
+	&#34;github.com/firebase/genkit/go/ai&#34;
+	&#34;github.com/firebase/genkit/go/genkit&#34;
+	&#34;github.com/firebase/genkit/go/plugins/googlegenai&#34;
+)
+
+// Recipe represents a structured recipe
+type Recipe struct {
+	Name         string   `json:&#34;name&#34; jsonschema:&#34;description=Name of the recipe&#34;`
+	Ingredients  []string `json:&#34;ingredients&#34; jsonschema:&#34;description=List of ingredients&#34;`
+	Instructions []string `json:&#34;instructions&#34; jsonschema:&#34;description=Step-by-step cooking instructions&#34;`
+	PrepTime     string   `json:&#34;prepTime&#34; jsonschema:&#34;description=Preparation time&#34;`
+	Difficulty   string   `json:&#34;difficulty&#34; jsonschema:&#34;description=Difficulty level (easy, medium, hard)&#34;`
+}
+
+// RecipeInput represents input for recipe generation
+type RecipeInput struct {
+	Ingredient string `json:&#34;ingredient&#34; jsonschema:&#34;description=Main ingredient&#34;`
+	MealType   string `json:&#34;mealType&#34; jsonschema:&#34;description=Type of meal (breakfast, lunch, dinner, snack)&#34;`
+}
+
+func generateRecipe() {
+	ctx := context.Background()
+
+	// Load environment variables
+	apiKey := os.Getenv(&#34;GEMINI_API_KEY&#34;)
+	if apiKey == &#34;&#34; {
+		log.Fatal(&#34;GEMINI_API_KEY environment variable is required&#34;)
+	}
+
+	// Initialize Genkit
+	g := genkit.Init(ctx,
+		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
+		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+	)
+
+	input := RecipeInput{
+		Ingredient: &#34;avocado&#34;,
+		MealType:   &#34;breakfast&#34;,
+	}
+
+	prompt := fmt.Sprintf(`Create a simple recipe for %s using %s as the main ingredient.
+		Keep it easy to follow with basic ingredients and simple steps.
+		Return as structured data with name, ingredients, instructions, prep time, and difficulty.`,
+		input.MealType, input.Ingredient)
+
+	recipe, _, err := genkit.GenerateData[Recipe](ctx, g,
+		ai.WithPrompt(prompt),
+	)
+	if err != nil {
+		log.Fatalf(&#34;Error generating recipe: %v&#34;, err)
+	}
+
+	fmt.Println(&#34;=== Generated Recipe ===&#34;)
+	recipeJSON, _ := json.MarshalIndent(recipe, &#34;&#34;, &#34;  &#34;)
+	fmt.Println(string(recipeJSON))
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Example 3: Building Simple Genkit Flows" duration="15">
+        <p>Flows are reusable functions that can be called, tested, and monitored. They&#39;re perfect for building simple AI workflows that can be served as HTTP endpoints.</p>
+<h2 is-upgraded>Create a basic greeting flow</h2>
+<p>Create <code>example3/main.go</code>:</p>
+<pre><code language="language-go" class="language-go">package main
+
+import (
+	&#34;context&#34;
+	&#34;encoding/json&#34;
+	&#34;fmt&#34;
+	&#34;log&#34;
+	&#34;net/http&#34;
+	&#34;os&#34;
+
+	&#34;github.com/firebase/genkit/go/ai&#34;
+	&#34;github.com/firebase/genkit/go/genkit&#34;
+	&#34;github.com/firebase/genkit/go/plugins/googlegenai&#34;
+	&#34;github.com/firebase/genkit/go/plugins/server&#34;
+)
+
+// GreetingInput represents input for greeting generation
+type GreetingInput struct {
+	Name     string `json:&#34;name&#34; jsonschema:&#34;description=The person&#39;s name&#34;`
+	Language string `json:&#34;language&#34; jsonschema:&#34;description=Language for greeting (english, spanish, french)&#34;`
+}
+
+// GreetingOutput represents the generated greeting
+type GreetingOutput struct {
+	Greeting string `json:&#34;greeting&#34; jsonschema:&#34;description=The generated greeting&#34;`
+}
+
+// JokeInput represents input for joke generation
+type JokeInput struct {
+	Topic string `json:&#34;topic&#34; jsonschema:&#34;description=The topic for the joke&#34;`
+}
+
+// JokeOutput represents the generated joke
+type JokeOutput struct {
+	Joke string `json:&#34;joke&#34; jsonschema:&#34;description=The generated joke&#34;`
+}
+
+func main() {
+	ctx := context.Background()
+
+	// Load environment variables
+	apiKey := os.Getenv(&#34;GEMINI_API_KEY&#34;)
+	if apiKey == &#34;&#34; {
+		log.Fatal(&#34;GEMINI_API_KEY environment variable is required&#34;)
+	}
+
+	// Initialize Genkit with Google AI plugin
+	g := genkit.Init(ctx,
+		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
+		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+	)
+
+	// Define a greeting flow
+	greetingFlow := genkit.DefineFlow(g, &#34;greeting&#34;, func(ctx context.Context, input *GreetingInput) (*GreetingOutput, error) {
+		prompt := fmt.Sprintf(&#34;Create a friendly greeting for %s in %s. Keep it warm and welcoming.&#34;, input.Name, input.Language)
+
+		response, err := genkit.Generate(ctx, g,
+			ai.WithPrompt(prompt),
+		)
+		if err != nil {
+			return nil, fmt.Errorf(&#34;failed to generate greeting: %w&#34;, err)
+		}
+
+		return &amp;GreetingOutput{
+			Greeting: response.Text(),
+		}, nil
+	})
+
+	// Define a joke generator flow
+	jokeFlow := genkit.DefineFlow(g, &#34;jokeGenerator&#34;, func(ctx context.Context, input *JokeInput) (*JokeOutput, error) {
+		prompt := fmt.Sprintf(&#34;Create a clean, family-friendly joke about %s. Keep it short and funny.&#34;, input.Topic)
+
+		response, err := genkit.Generate(ctx, g,
+			ai.WithPrompt(prompt),
+		)
+		if err != nil {
+			return nil, fmt.Errorf(&#34;failed to generate joke: %w&#34;, err)
+		}
+
+		return &amp;JokeOutput{
+			Joke: response.Text(),
+		}, nil
+	})
+
+	// Test the flows locally
+	fmt.Println(&#34;=== Testing Greeting Flow ===&#34;)
+	greetingResult, err := greetingFlow.Run(ctx, &amp;GreetingInput{
+		Name:     &#34;Alice&#34;,
+		Language: &#34;english&#34;,
+	})
+	if err != nil {
+		log.Printf(&#34;Error running greeting flow: %v&#34;, err)
+	} else {
+		fmt.Printf(&#34;Greeting Result: %s\n&#34;, greetingResult.Greeting)
+	}
+
+	fmt.Println(&#34;\n=== Testing Joke Flow ===&#34;)
+	jokeResult, err := jokeFlow.Run(ctx, &amp;JokeInput{
+		Topic: &#34;programming&#34;,
+	})
+	if err != nil {
+		log.Printf(&#34;Error running joke flow: %v&#34;, err)
+	} else {
+		fmt.Printf(&#34;Joke Result: %s\n&#34;, jokeResult.Joke)
+	}
+
+	// Test multiple greetings
+	fmt.Println(&#34;\n=== Testing Multiple Greetings ===&#34;)
+	people := []GreetingInput{
+		{Name: &#34;Bob&#34;, Language: &#34;spanish&#34;},
+		{Name: &#34;Claire&#34;, Language: &#34;french&#34;},
+	}
+
+	for _, person := range people {
+		result, err := greetingFlow.Run(ctx, &amp;person)
+		if err != nil {
+			log.Printf(&#34;Error greeting %s: %v&#34;, person.Name, err)
+			continue
+		}
+		fmt.Printf(&#34;%s (%s): %s\n&#34;, person.Name, person.Language, result.Greeting)
+	}
+
+	// Set up HTTP server to serve the flows
+	mux := http.NewServeMux()
+	mux.HandleFunc(&#34;POST /greeting&#34;, genkit.Handler(greetingFlow))
+	mux.HandleFunc(&#34;POST /jokeGenerator&#34;, genkit.Handler(jokeFlow))
+
+	// Print sample usage
+	fmt.Println(&#34;\n=== Server Starting ===&#34;)
+	fmt.Println(&#34;Starting server on http://localhost:3400&#34;)
+	fmt.Println(&#34;Flows available at:&#34;)
+	fmt.Println(&#34;  POST http://localhost:3400/greeting&#34;)
+	fmt.Println(&#34;  POST http://localhost:3400/jokeGenerator&#34;)
+	fmt.Println(&#34;\nSample curl commands:&#34;)
+	fmt.Println(`  curl -X POST &#34;http://localhost:3400/greeting&#34; \`)
+	fmt.Println(`    -H &#34;Content-Type: application/json&#34; \`)
+	fmt.Println(`    -d &#39;{&#34;data&#34;: {&#34;name&#34;: &#34;Alice&#34;, &#34;language&#34;: &#34;english&#34;}}&#39;`)
+	fmt.Println()
+	fmt.Println(`  curl -X POST &#34;http://localhost:3400/jokeGenerator&#34; \`)
+	fmt.Println(`    -H &#34;Content-Type: application/json&#34; \`)
+	fmt.Println(`    -d &#39;{&#34;data&#34;: {&#34;topic&#34;: &#34;programming&#34;}}&#39;`)
+
+	// Start the server
+	log.Fatal(server.Start(ctx, &#34;127.0.0.1:3400&#34;, mux))
+}
+</code></pre>
+<h2 is-upgraded>Test your flows</h2>
+<p>Run the flows example:</p>
+<pre><code language="language-bash" class="language-bash">cd example3
+go run main.go
+</code></pre>
+<h2 is-upgraded>Test flows via HTTP</h2>
+<p>With the server running, you can test your flows using curl in a new terminal:</p>
+<pre><code language="language-bash" class="language-bash"># Test greeting flow
+curl -X POST &#34;http://localhost:3400/greeting&#34; \
+  -H &#34;Content-Type: application/json&#34; \
+  -d &#39;{&#34;data&#34;: {&#34;name&#34;: &#34;Alice&#34;, &#34;language&#34;: &#34;english&#34;}}&#39;
+
+# Test joke flow
+curl -X POST &#34;http://localhost:3400/jokeGenerator&#34; \
+  -H &#34;Content-Type: application/json&#34; \
+  -d &#39;{&#34;data&#34;: {&#34;topic&#34;: &#34;programming&#34;}}&#39;
+</code></pre>
+<h2 is-upgraded>Test flows in the Developer UI</h2>
+<p>Start the Developer UI and navigate to the Flows section:</p>
+<pre><code language="language-bash" class="language-bash">genkit start -- go run example3/main.go
+</code></pre>
+<p>In the Developer UI, you&#39;ll be able to:</p>
+<ul>
+<li>See all your defined flows</li>
+<li>Test them with custom inputs</li>
+<li>View execution traces and performance metrics</li>
+<li>Debug any issues step by step</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing and Debugging with Firebase Studio" duration="10">
+        <p>Firebase Studio provides a powerful interface for testing and debugging your Genkit applications.</p>
+<h2 is-upgraded>Key Features of Firebase Studio</h2>
+<ol type="1">
+<li><strong>Flow Testing</strong>: Interactive testing of your flows with custom inputs</li>
+<li><strong>Structured Output</strong>: Visual display of your Go struct responses</li>
+<li><strong>Model Comparison</strong>: Test the same prompt with different models side by side</li>
+<li><strong>Execution Traces</strong>: Detailed view of each step in your flows</li>
+<li><strong>Performance Monitoring</strong>: Track response times and token usage</li>
+</ol>
+<h2 is-upgraded>Best Practices for Testing</h2>
+<ol type="1">
+<li><strong>Start Simple</strong>: Test basic functionality before adding complexity</li>
+<li><strong>Use Diverse Inputs</strong>: Test with various input types and edge cases</li>
+<li><strong>Monitor Performance</strong>: Watch token usage and response times</li>
+<li><strong>Iterate on Prompts</strong>: Use Studio to refine your prompts for better results</li>
+<li><strong>Version Control</strong>: Keep track of prompt changes and their performance</li>
+</ol>
+<h2 is-upgraded>Debugging Common Issues</h2>
+<h3 is-upgraded>API Key Problems</h3>
+<pre><code language="language-bash" class="language-bash">Error: GEMINI_API_KEY environment variable is required
+</code></pre>
+<ul>
+<li>Check that your <code>GEMINI_API_KEY</code> is set correctly</li>
+<li>Verify the API key is valid and has proper permissions</li>
+</ul>
+<h3 is-upgraded>JSON Schema Errors</h3>
+<pre><code language="language-bash" class="language-bash">Error: failed to generate structured data
+</code></pre>
+<ul>
+<li>Review your Go struct tags for accuracy</li>
+<li>Ensure your <code>jsonschema</code> tags provide clear descriptions</li>
+<li>Test with simpler structs first</li>
+</ul>
+<h3 is-upgraded>HTTP Server Issues</h3>
+<pre><code language="language-bash" class="language-bash">Error: address already in use
+</code></pre>
+<ul>
+<li>Change the port in your <code>server.Start()</code> call</li>
+<li>Kill any existing processes using the port</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps" duration="0">
+        <p>Congratulations! You&#39;ve learned the fundamentals of Firebase Genkit with Go. Here&#39;s what you can explore next:</p>
+<h2 is-upgraded>Continue Learning</h2>
+<ul>
+<li><strong>Custom Models</strong>: Integrate other AI providers (OpenAI, Anthropic, local models)</li>
+<li><strong>Vector Databases</strong>: Add semantic search capabilities with embeddings</li>
+<li><strong>Tool Calling</strong>: Enable AI to call your custom functions</li>
+<li><strong>Production Deployment</strong>: Deploy your Genkit apps to Cloud Functions or Cloud Run</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://genkit.dev/docs/" target="_blank">Official Genkit Documentation</a></li>
+<li><a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub Repository</a></li>
+<li><a href="https://discord.gg/firebase" target="_blank">Firebase Discord Community</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Troubleshooting" duration="0">
+        <h2 is-upgraded>Common Issues and Solutions</h2>
+<h3 is-upgraded>&#34;Go module not found&#34; errors</h3>
+<pre><code language="language-bash" class="language-bash">go mod tidy
+go get github.com/firebase/genkit/go
+</code></pre>
+<h3 is-upgraded>Go compilation errors</h3>
+<pre><code language="language-bash" class="language-bash">go build .  # Check for compilation errors
+</code></pre>
+<h3 is-upgraded>&#34;genkit command not found&#34;</h3>
+<pre><code language="language-bash" class="language-bash">curl -sL cli.genkit.dev | bash  # Install genkit CLI
+</code></pre>
+<h3 is-upgraded>Firebase Studio not starting</h3>
+<pre><code language="language-bash" class="language-bash">genkit start --port 4000 -- go run main.go  # Try different port
+</code></pre>
+<h3 is-upgraded>API rate limits</h3>
+<ul>
+<li>Implement exponential backoff</li>
+<li>Use batch processing for multiple requests</li>
+<li>Consider upgrading your API plan</li>
+</ul>
+<h2 is-upgraded>Getting Help</h2>
+<ul>
+<li>Check the <a href="https://github.com/firebase/genkit/issues" target="_blank">GitHub Issues</a></li>
+<li>Join the <a href="https://discord.gg/firebase" target="_blank">Firebase Discord</a></li>
+<li>Post questions on <a href="https://stackoverflow.com/questions/tagged/firebase-genkit" target="_blank">Stack Overflow</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>You&#39;ve successfully built three different patterns for working with Firebase Genkit in Go:</p>
+<ol type="1">
+<li><strong>Direct AI Generation</strong>: Quick and simple for basic use cases</li>
+<li><strong>Structured Data</strong>: Type-safe responses using Go structs</li>
+<li><strong>Flows</strong>: Powerful and reusable for complex AI workflows</li>
+</ol>
+<p>These patterns form the foundation for building sophisticated AI-powered applications. Start with simple use cases and gradually build more complex workflows as you become comfortable with the framework.</p>
+<p>Happy building with Firebase Genkit and Go! 🚀</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

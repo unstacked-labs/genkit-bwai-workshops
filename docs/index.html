@@ -3,125 +3,217 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Firebase Genkit TypeScript Codelab</title>
+    <title>Genkit Codelabs - Unstacked Labs</title>
     <style>
       body {
         font-family: 'Roboto', sans-serif;
         margin: 0;
         padding: 20px;
-        background-color: #f5f5f5;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
       }
       .container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
         background: white;
         padding: 40px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       }
       .header {
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 50px;
+        position: relative;
+      }
+      .brand-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
       .title {
-        color: #1976d2;
-        font-size: 2.5em;
-        margin: 0;
+        color: #2c3e50;
+        font-size: 3em;
+        margin: 10px 0;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       .subtitle {
         color: #666;
-        font-size: 1.2em;
-        margin: 10px 0;
+        font-size: 1.3em;
+        margin: 15px 0;
+        font-weight: 300;
+      }
+      .brand-tagline {
+        color: #667eea;
+        font-size: 1.1em;
+        font-weight: 500;
+        margin: 20px 0;
+        font-style: italic;
       }
       .codelab-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 20px 0;
-        transition: box-shadow 0.3s ease;
+        border: 2px solid #e8ebf0;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 25px 0;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        position: relative;
       }
       .codelab-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+        border-color: #667eea;
+      }
+      .codelab-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px 12px 0 0;
       }
       .codelab-title {
-        font-size: 1.5em;
-        color: #1976d2;
-        margin: 0 0 10px 0;
+        font-size: 1.6em;
+        color: #2c3e50;
+        margin: 0 0 15px 0;
+        font-weight: 600;
       }
       .codelab-summary {
-        color: #666;
-        margin: 10px 0;
+        color: #555;
+        margin: 15px 0;
+        line-height: 1.6;
       }
       .codelab-meta {
         display: flex;
-        gap: 20px;
-        margin: 15px 0;
-        font-size: 0.9em;
-        color: #888;
+        gap: 25px;
+        margin: 20px 0;
+        font-size: 0.95em;
+        color: #666;
+        flex-wrap: wrap;
       }
       .codelab-link {
         display: inline-block;
-        background: #1976d2;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 10px 20px;
+        padding: 12px 24px;
         text-decoration: none;
-        border-radius: 4px;
-        font-weight: 500;
-        margin-top: 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9em;
       }
       .codelab-link:hover {
-        background: #1565c0;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
       }
       .footer {
         text-align: center;
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid #e0e0e0;
+        margin-top: 50px;
+        padding: 30px 0;
+        border-top: 2px solid #e8ebf0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 0 0 12px 12px;
+        margin-left: -40px;
+        margin-right: -40px;
+        margin-bottom: -40px;
+      }
+      .footer-brand {
+        margin-bottom: 15px;
+      }
+      .footer-brand a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1em;
+      }
+      .footer-links {
         color: #666;
+        font-size: 0.95em;
+      }
+      .footer-links a {
+        color: #667eea;
+        text-decoration: none;
+        margin: 0 8px;
+      }
+      .footer-links a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <h1 class="title">Firebase Genkit Codelabs</h1>
-        <p class="subtitle">Learn to build AI-powered applications with Firebase Genkit</p>
+        <div class="brand-badge">Unstacked Labs</div>
+        <h1 class="title">Genkit Codelabs</h1>
+        <p class="subtitle">Learn to build AI-powered applications with Genkit</p>
+        <p class="brand-tagline">"Your trusted partner for technology solutions"</p>
+        <p style="color: #667eea; font-weight: 600; margin-top: 15px">
+          by
+          <a
+            href="https://unstacked.dev"
+            target="_blank"
+            style="color: #667eea; text-decoration: none; font-weight: 700"
+            >Unstacked Labs</a
+          >
+        </p>
       </div>
 
       <div class="codelab-card">
-        <h2 class="codelab-title">Getting Started with Firebase Genkit and TypeScript</h2>
+        <h2 class="codelab-title">Getting Started with Genkit and TypeScript</h2>
         <p class="codelab-summary">
-          Learn how to build AI-powered applications with Firebase Genkit and TypeScript. This comprehensive codelab
-          covers basic AI generation, prompt management, and building reusable flows.
+          Learn how to build AI-powered applications with Genkit and TypeScript. This comprehensive codelab covers basic
+          AI generation, prompt management, and building reusable flows.
         </p>
         <div class="codelab-meta">
           <span>⏱️ Duration: 45-60 minutes</span>
           <span>📚 Level: Beginner</span>
-          <span>🏷️ TypeScript, AI, Firebase</span>
+          <span>🏷️ TypeScript, AI, Genkit</span>
         </div>
         <a href="firebase-genkit-typescript-codelab/" class="codelab-link">Start TypeScript Codelab</a>
       </div>
 
       <div class="codelab-card">
-        <h2 class="codelab-title">Getting Started with Firebase Genkit and Go</h2>
+        <h2 class="codelab-title">Getting Started with Genkit and Go</h2>
         <p class="codelab-summary">
-          Learn how to build AI-powered applications with Firebase Genkit and Go. This comprehensive codelab covers
-          basic AI generation, structured data generation, and building reusable flows.
+          Learn how to build AI-powered applications with Genkit and Go. This comprehensive codelab covers basic AI
+          generation, structured data generation, and building reusable flows.
         </p>
         <div class="codelab-meta">
           <span>⏱️ Duration: 45-60 minutes</span>
           <span>📚 Level: Beginner</span>
-          <span>🏷️ Go, AI, Firebase</span>
+          <span>🏷️ Go, AI, Genkit</span>
         </div>
         <a href="firebase-genkit-go-codelab/" class="codelab-link">Start Go Codelab</a>
       </div>
 
       <div class="footer">
-        <p>
-          Built with ❤️ for the Firebase community |
+        <div class="footer-brand">
+          <p style="margin: 0 0 10px 0">
+            Built with ❤️ by <a href="https://unstacked.dev" target="_blank">Unstacked Labs</a>
+          </p>
+          <p style="margin: 0; color: #888; font-size: 0.9em">Your trusted partner for technology solutions</p>
+        </div>
+        <div class="footer-links">
+          <a href="https://unstacked.dev/contacts" target="_blank">Contact Us</a> |
           <a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub</a> |
-          <a href="https://genkit.dev" target="_blank">Documentation</a>
-        </p>
+          <a href="https://genkit.dev" target="_blank">Documentation</a> |
+          <a href="https://github.com/unstacked-labs" target="_blank">Our GitHub</a>
+        </div>
       </div>
     </div>
   </body>

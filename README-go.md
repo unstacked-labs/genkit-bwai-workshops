@@ -141,7 +141,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	// Simple text generation
@@ -201,7 +201,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	// Example 1: Generate a welcome message
@@ -303,7 +303,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	// Generate a structured story
@@ -424,7 +424,7 @@ func generateRecipe() {
 	// Initialize Genkit
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	input := RecipeInput{
@@ -512,7 +512,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	// Define a greeting flow

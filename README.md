@@ -1,6 +1,16 @@
+author: Firebase Team
+summary: Learn how to build AI-powered applications with Firebase Genkit and TypeScript
+id: firebase-genkit-typescript-codelab
+categories: Firebase, AI, TypeScript
+environments: Web
+status: Published
+feedback: https://github.com/firebase/genkit/issues
+
 # Getting Started with Firebase Genkit and TypeScript
 
 ## Overview
+
+Duration: 5
 
 Firebase Genkit is a powerful framework for building AI-powered applications with TypeScript. This codelab will guide you through three essential patterns for working with Genkit: basic AI generation, prompt management with `.prompt` files, and building reusable flows.
 
@@ -40,11 +50,11 @@ By the end of this codelab, you'll have built three practical business examples:
 2. A project planning assistant using `.prompt` files
 3. A complete content analysis flow for team communications and documentation
 
-## Duration: 45-60 minutes
-
 ---
 
 ## Setting up your environment
+
+Duration: 10
 
 Before we start building, let's set up a new Genkit project.
 
@@ -148,6 +158,8 @@ If any command fails, please install the missing dependencies using the links pr
 
 ## Example 1: Basic AI Generation with ai.generate
 
+Duration: 10
+
 Let's start with the simplest way to use Genkit: direct AI generation using the `ai.generate` API.
 
 ### Create the basic generator
@@ -162,6 +174,7 @@ import 'dotenv/config';
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: 'gemini-2.5-flash',
 });
 
 async function basicGeneration() {
@@ -204,6 +217,7 @@ import 'dotenv/config';
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: 'gemini-2.5-flash',
 });
 
 async function basicGeneration() {
@@ -257,6 +271,8 @@ This will open the Genkit Developer UI in your browser where you can test your A
 ---
 
 ## Example 2: Working with Prompt Files
+
+Duration: 15
 
 Managing prompts in separate files makes them more maintainable and allows for better collaboration. Let's create a simple story generator using `.prompt` files.
 
@@ -389,6 +405,8 @@ With the Developer UI running (`genkit start -- tsx --watch src/index.ts`), you 
 
 ## Example 3: Building Simple Genkit Flows
 
+Duration: 15
+
 Flows are reusable functions that can be called, tested, and monitored. They're perfect for building simple AI workflows.
 
 ### Create a basic greeting flow
@@ -403,6 +421,7 @@ import 'dotenv/config';
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: 'gemini-2.5-flash',
 });
 
 // Define a simple greeting flow
@@ -544,6 +563,8 @@ In the Developer UI, you'll be able to:
 
 ## Testing and Debugging with Firebase Studio
 
+Duration: 10
+
 Firebase Studio provides a powerful interface for testing and debugging your Genkit applications.
 
 ### Key Features of Firebase Studio
@@ -610,6 +631,8 @@ Error: Rate limit exceeded
 
 ## Next Steps and Additional Resources
 
+Duration: 5
+
 Congratulations! You've learned the fundamentals of Firebase Genkit with TypeScript. Here's what you can explore next:
 
 ### Intermediate Topics
@@ -652,6 +675,8 @@ Congratulations! You've learned the fundamentals of Firebase Genkit with TypeScr
 ---
 
 ## Troubleshooting
+
+Duration: 5
 
 ### Common Issues and Solutions
 
@@ -702,6 +727,8 @@ npx genkit start --port 4000  # Try different port
 ---
 
 ## Conclusion
+
+Duration: 2
 
 You've successfully built three different patterns for working with Firebase Genkit:
 

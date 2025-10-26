@@ -39,7 +39,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel("googleai/gemini-2.5-flash"),
+		genkit.WithDefaultModel("gemini-2.5-flash"),
 	)
 
 	// Generate a structured story

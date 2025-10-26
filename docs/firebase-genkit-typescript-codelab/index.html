@@ -30,6 +30,12 @@
     
       <google-codelab-step label="Overview" duration="5">
         <p>Firebase Genkit is a powerful framework for building AI-powered applications with TypeScript. This codelab will guide you through three essential patterns for working with Genkit: basic AI generation, prompt management with <code>.prompt</code> files, and building reusable flows.</p>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/" target="_blank">Official Genkit Documentation</a></li>
+<li><a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub Repository</a></li>
+<li><a href="https://discord.gg/qXt5zzQKpc" target="_blank">Firebase Genkit Discord Community</a></li>
+</ul>
 <h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
 <ul class="checklist">
 <li>How to set up Firebase Genkit in a TypeScript project</li>
@@ -45,12 +51,19 @@
 <li>A Google AI API key - <a href="https://aistudio.google.com/apikey" target="_blank">Get API key here</a></li>
 <li>Basic knowledge of TypeScript/JavaScript</li>
 </ul>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://nodejs.org/en/learn/getting-started/how-to-install-nodejs" target="_blank">Node.js Installation Guide</a></li>
+<li><a href="https://www.typescriptlang.org/docs/" target="_blank">TypeScript Documentation</a></li>
+<li><a href="https://code.visualstudio.com/docs/typescript/typescript-tutorial" target="_blank">VS Code Setup for TypeScript</a></li>
+<li><a href="https://ai.google.dev/aistudio/docs/get_api_key" target="_blank">Google AI Studio Guide</a></li>
+</ul>
 <h2 is-upgraded>What you&#39;ll build</h2>
-<p>By the end of this codelab, you&#39;ll have built three simple examples:</p>
+<p>By the end of this codelab, you&#39;ll have built three practical business examples:</p>
 <ol type="1">
-<li><strong>Basic AI Generation</strong>: Simple text generation using <code>ai.generate</code></li>
-<li><strong>Story Generator</strong>: Using <code>.prompt</code> files for template-based generation</li>
-<li><strong>Greeting &amp; Joke Flows</strong>: Simple reusable flows with input/output schemas</li>
+<li>A professional communication generator (emails, bug reports) using <code>ai.generate</code></li>
+<li>A project planning assistant using <code>.prompt</code> files</li>
+<li>A complete content analysis flow for team communications and documentation</li>
 </ol>
 
 
@@ -117,6 +130,13 @@ npm --version
 npx tsc --version
 </code></pre>
 <p>If any command fails, please install the missing dependencies using the links provided above.</p>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://docs.npmjs.com/" target="_blank">npm Documentation</a></li>
+<li><a href="https://www.typescriptlang.org/tsconfig" target="_blank">TypeScript Configuration Reference</a></li>
+<li><a href="https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs" target="_blank">Environment Variables Best Practices</a></li>
+<li><a href="https://www.npmjs.com/package/dotenv" target="_blank">dotenv Package Documentation</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -132,6 +152,7 @@ import &#39;dotenv/config&#39;;
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: &#39;gemini-2.5-flash&#39;,
 });
 
 async function basicGeneration() {
@@ -165,6 +186,7 @@ import &#39;dotenv/config&#39;;
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: &#39;gemini-2.5-flash&#39;,
 });
 
 async function basicGeneration() {
@@ -202,6 +224,13 @@ basicGeneration();
 <pre><code language="language-bash" class="language-bash">genkit start -- tsx --watch src/index.ts
 </code></pre>
 <p>This will open the Genkit Developer UI in your browser where you can test your AI generation with different prompts and see the results in real-time.</p>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/models" target="_blank">Genkit Models Documentation</a></li>
+<li><a href="https://zod.dev/" target="_blank">Structured Output with Zod</a></li>
+<li><a href="https://genkit.dev/docs/devtools" target="_blank">Genkit Developer Tools</a></li>
+<li><a href="https://genkit.dev/docs/integrations/google-genai" target="_blank">Google AI Gemini Models</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -304,6 +333,13 @@ Keep it easy to follow with basic ingredients and simple steps.
 <p>You should see several different stories generated using your prompt file!</p>
 <h2 is-upgraded>View prompts in the Developer UI</h2>
 <p>With the Developer UI running (<code>genkit start -- tsx --watch src/index.ts</code>), you can see your prompts listed in the interface and test them with different inputs interactively.</p>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/dotprompt" target="_blank">Dotprompt Documentation</a></li>
+<li><a href="https://handlebarsjs.com/guide/" target="_blank">Handlebars Template Guide</a></li>
+<li><a href="https://genkit.dev/docs/dotprompt#prompt-templates" target="_blank">Prompt Engineering Best Practices</a></li>
+<li><a href="https://genkit.dev/docs/dotprompt#picoschema" target="_blank">Schema Definition with Picoschema</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -319,6 +355,7 @@ import &#39;dotenv/config&#39;;
 // Initialize Genkit with Google AI
 const ai = genkit({
   plugins: [googleAI()],
+  model: &#39;gemini-2.5-flash&#39;,
 });
 
 // Define a simple greeting flow
@@ -437,6 +474,13 @@ Add a script to your `package.json` to easily run the flows:
 <li>View execution traces and performance metrics</li>
 <li>Debug any issues step by step</li>
 </ul>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/flows" target="_blank">Creating Flows Documentation</a></li>
+<li><a href="https://genkit.dev/docs/flows#debugging-flows" target="_blank">Flow Debugging and Tracing</a></li>
+<li><a href="https://genkit.dev/docs/flows#streaming-flows" target="_blank">Streaming Flows</a></li>
+<li><a href="https://genkit.dev/docs/flows#deploying-flows" target="_blank">Flow Deployment Options</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -459,12 +503,19 @@ Add a script to your `package.json` to easily run the flows:
 <li><strong>Iterate on Prompts</strong>: Use Studio to refine your prompts for better results</li>
 <li><strong>Version Control</strong>: Keep track of prompt changes and their performance</li>
 </ol>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/devtools" target="_blank">Genkit Developer Tools Guide</a></li>
+<li><a href="https://genkit.dev/docs/local-observability" target="_blank">Local Observability</a></li>
+<li><a href="https://genkit.dev/docs/evaluation" target="_blank">Testing Strategies</a></li>
+<li><a href="https://genkit.dev/docs/observability/getting-started" target="_blank">Performance Monitoring</a></li>
+</ul>
 <h2 is-upgraded>Debugging Common Issues</h2>
 <h3 is-upgraded>API Key Problems</h3>
 <pre><code language="language-bash" class="language-bash">Error: Failed to authenticate with Google AI
 </code></pre>
 <ul>
-<li>Check that your <code>GEMINI_API_KEY</code> is set correctly</li>
+<li>Check that your <code>GOOGLE_GENAI_API_KEY</code> is set correctly</li>
 <li>Verify the API key is valid and has proper permissions</li>
 </ul>
 <h3 is-upgraded>Schema Validation Errors</h3>
@@ -482,45 +533,76 @@ Add a script to your `package.json` to easily run the flows:
 <li>Implement retry logic with exponential backoff</li>
 <li>Consider using different models or reducing request frequency</li>
 </ul>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/error-types" target="_blank">Error Types Documentation</a></li>
+<li><a href="https://genkit.dev/docs/observability/troubleshooting" target="_blank">Troubleshooting Guide</a></li>
+<li><a href="https://ai.google.dev/pricing" target="_blank">Google AI Rate Limits</a></li>
+<li><a href="https://ai.google.dev/aistudio/docs/get_api_key" target="_blank">API Authentication Guide</a></li>
+</ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Next Steps" duration="0">
+      <google-codelab-step label="Next Steps and Additional Resources" duration="5">
         <p>Congratulations! You&#39;ve learned the fundamentals of Firebase Genkit with TypeScript. Here&#39;s what you can explore next:</p>
-<h2 is-upgraded>Continue Learning</h2>
+<h2 is-upgraded>Intermediate Topics</h2>
 <ul>
 <li><strong>Custom Models</strong>: Integrate other AI providers (OpenAI, Anthropic, local models)</li>
 <li><strong>Vector Databases</strong>: Add semantic search capabilities with embeddings</li>
 <li><strong>Function Calling</strong>: Enable AI to call your custom functions</li>
-<li><strong>Production Deployment</strong>: Deploy your Genkit apps to Cloud Functions or Cloud Run</li>
+<li><strong>Memory Management</strong>: Implement conversation memory and context management</li>
 </ul>
-<h2 is-upgraded>Resources</h2>
+<h2 is-upgraded>Advanced Topics</h2>
 <ul>
-<li><a href="https://genkit.dev/docs/" target="_blank">Official Genkit Documentation</a></li>
-<li><a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub Repository</a></li>
-<li><a href="https://discord.gg/firebase" target="_blank">Firebase Discord Community</a></li>
+<li><strong>Production Deployment</strong>: Deploy your Genkit apps to Cloud Functions or Cloud Run</li>
+<li><strong>Monitoring and Analytics</strong>: Set up comprehensive monitoring for your AI applications</li>
+<li><strong>Custom Plugins</strong>: Build your own Genkit plugins</li>
+<li><strong>Multi-modal AI</strong>: Work with images, audio, and video</li>
+</ul>
+<h2 is-upgraded>Useful Resources</h2>
+<ol type="1">
+<li><strong>Official Documentation</strong>: <a href="https://firebase.google.com/docs/genkit" target="_blank">Firebase Genkit Docs</a></li>
+<li><strong>GitHub Repository</strong>: <a href="https://github.com/firebase/genkit" target="_blank">Genkit GitHub</a></li>
+<li><strong>Community</strong>: <a href="https://discord.gg/firebase" target="_blank">Firebase Discord</a></li>
+<li><strong>Examples</strong>: <a href="https://github.com/firebase/genkit/tree/main/samples" target="_blank">Genkit Samples</a></li>
+</ol>
+<h2 is-upgraded>Sample Projects to Build</h2>
+<ol type="1">
+<li><strong>AI Content Assistant</strong>: Blog post generator with SEO optimization</li>
+<li><strong>Code Review Bot</strong>: Automated code analysis and suggestions</li>
+<li><strong>Customer Service Chatbot</strong>: Multi-turn conversations with context</li>
+<li><strong>Document Processor</strong>: Extract and analyze information from PDFs</li>
+<li><strong>Language Learning App</strong>: Personalized lessons and practice exercises</li>
+</ol>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/tutorials/chat-with-pdf" target="_blank">Chat with PDF Tutorial</a></li>
+<li><a href="https://genkit.dev/docs/tutorials/summarize-youtube-videos" target="_blank">YouTube Video Summarizer</a></li>
+<li><a href="https://genkit.dev/docs/rag" target="_blank">RAG Implementation Guide</a></li>
+<li><a href="https://genkit.dev/docs/multi-agent" target="_blank">Multi-Agent Systems</a></li>
+<li><a href="https://genkit.dev/docs/evaluation" target="_blank">Evaluation Framework</a></li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Troubleshooting" duration="0">
+      <google-codelab-step label="Troubleshooting" duration="5">
         <h2 is-upgraded>Common Issues and Solutions</h2>
-<h3 is-upgraded>&#34;Module not found&#34; errors</h3>
+<p><strong>Issue: &#34;Module not found&#34; errors</strong></p>
 <pre><code language="language-bash" class="language-bash">npm install --save-dev @types/node
 npm install dotenv
 </code></pre>
-<h3 is-upgraded>TypeScript compilation errors</h3>
+<p><strong>Issue: TypeScript compilation errors</strong></p>
 <pre><code language="language-bash" class="language-bash">npx tsc --noEmit  # Check for type errors
 </code></pre>
-<h3 is-upgraded>&#34;tsx command not found&#34;</h3>
+<p><strong>Issue: &#34;tsx command not found&#34;</strong></p>
 <pre><code language="language-bash" class="language-bash">npm install -g tsx  # Install tsx globally, or use npx tsx
 </code></pre>
-<h3 is-upgraded>Firebase Studio not starting</h3>
+<p><strong>Issue: Firebase Studio not starting</strong></p>
 <pre><code language="language-bash" class="language-bash">npx genkit start --port 4000  # Try different port
 </code></pre>
-<h3 is-upgraded>API rate limits</h3>
+<p><strong>Issue: API rate limits</strong></p>
 <ul>
 <li>Implement exponential backoff</li>
 <li>Use batch processing for multiple requests</li>
@@ -532,11 +614,18 @@ npm install dotenv
 <li>Join the <a href="https://discord.gg/firebase" target="_blank">Firebase Discord</a></li>
 <li>Post questions on <a href="https://stackoverflow.com/questions/tagged/firebase-genkit" target="_blank">Stack Overflow</a></li>
 </ul>
+<p><strong>📚 Additional Resources:</strong></p>
+<ul>
+<li><a href="https://github.com/firebase/genkit/blob/main/CONTRIBUTING.md" target="_blank">Community Guidelines</a></li>
+<li><a href="https://genkit.dev/docs/api-references" target="_blank">API References</a></li>
+<li><a href="https://genkit.dev/docs/feedback" target="_blank">Feedback and Feature Requests</a></li>
+<li><a href="https://genkit.dev/docs/deployment/authorization" target="_blank">Security and Best Practices</a></li>
+</ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Conclusion" duration="0">
+      <google-codelab-step label="Conclusion" duration="2">
         <p>You&#39;ve successfully built three different patterns for working with Firebase Genkit:</p>
 <ol type="1">
 <li><strong>Direct AI Generation</strong>: Quick and simple for basic use cases</li>
@@ -544,6 +633,13 @@ npm install dotenv
 <li><strong>Flows</strong>: Powerful and reusable for complex AI workflows</li>
 </ol>
 <p>These patterns form the foundation for building sophisticated AI-powered applications. Start with simple use cases and gradually build more complex workflows as you become comfortable with the framework.</p>
+<p><strong>📚 Continue Your Journey:</strong></p>
+<ul>
+<li><a href="https://genkit.dev/docs/" target="_blank">Advanced Genkit Patterns</a></li>
+<li><a href="https://genkit.dev/docs/deployment/" target="_blank">Production Deployment</a></li>
+<li><a href="https://github.com/firebase/genkit/tree/main/samples" target="_blank">Community Examples</a></li>
+<li><a href="https://github.com/firebase/genkit/releases" target="_blank">Latest Updates and Releases</a></li>
+</ul>
 <p>Happy building with Firebase Genkit! 🚀</p>
 
 

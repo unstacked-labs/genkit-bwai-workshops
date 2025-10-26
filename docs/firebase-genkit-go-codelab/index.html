@@ -123,7 +123,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+		genkit.WithDefaultModel(&#34;gemini-2.5-flash&#34;),
 	)
 
 	// Simple text generation
@@ -174,7 +174,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+		genkit.WithDefaultModel(&#34;gemini-2.5-flash&#34;),
 	)
 
 	// Example 1: Generate a welcome message
@@ -265,12 +265,12 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+		genkit.WithDefaultModel(&#34;gemini-2.5-flash&#34;),
 	)
 
 	// Generate a structured story
 	fmt.Println(&#34;=== Generating Structured Story ===&#34;)
-	
+
 	input := StoryInput{
 		Character: &#34;a friendly robot&#34;,
 		Setting:   &#34;a magical library&#34;,
@@ -279,7 +279,7 @@ func main() {
 	fmt.Printf(&#34;Character: %s\n&#34;, input.Character)
 	fmt.Printf(&#34;Setting: %s\n&#34;, input.Setting)
 
-	prompt := fmt.Sprintf(`Create a short, fun story about %s in %s. 
+	prompt := fmt.Sprintf(`Create a short, fun story about %s in %s.
 		Make it light-hearted and suitable for all ages.
 		Return the response as structured data with title, characters, setting, plot, and mood.`,
 		input.Character, input.Setting)
@@ -299,7 +299,7 @@ func main() {
 
 	// Generate different stories
 	fmt.Println(&#34;\n=== Generating Different Stories ===&#34;)
-	
+
 	stories := []StoryInput{
 		{Character: &#34;a curious cat&#34;, Setting: &#34;a space station&#34;},
 		{Character: &#34;a young wizard&#34;, Setting: &#34;a bustling marketplace&#34;},
@@ -308,8 +308,8 @@ func main() {
 
 	for i, storyInput := range stories {
 		fmt.Printf(&#34;\n--- Story %d: %s in %s ---\n&#34;, i+1, storyInput.Character, storyInput.Setting)
-		
-		prompt := fmt.Sprintf(`Create a short, fun story about %s in %s. 
+
+		prompt := fmt.Sprintf(`Create a short, fun story about %s in %s.
 			Make it light-hearted and suitable for all ages.
 			Return the response as structured data with title, characters, setting, plot, and mood.`,
 			storyInput.Character, storyInput.Setting)
@@ -377,7 +377,7 @@ func generateRecipe() {
 	// Initialize Genkit
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+		genkit.WithDefaultModel(&#34;gemini-2.5-flash&#34;),
 	)
 
 	input := RecipeInput{
@@ -459,7 +459,7 @@ func main() {
 	// Initialize Genkit with Google AI plugin
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&amp;googlegenai.GoogleAI{}),
-		genkit.WithDefaultModel(&#34;googleai/gemini-2.5-flash&#34;),
+		genkit.WithDefaultModel(&#34;gemini-2.5-flash&#34;),
 	)
 
 	// Define a greeting flow
